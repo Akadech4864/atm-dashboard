@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta name="site-ver" content="59d928ac8612">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://cdnjs.cloudflare.com; connect-src 'self' https://api.anthropic.com; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Cache-Control" content="no-cache">
+<title>Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="shell.css?v=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="app.css?v=62">
+</head>
+<body>
+<!-- หน้าล็อกอิน (แบบเดียวกับแอพเดิม) -->
+<section id="login">
+  <div class="login-card">
+    <img src="logo.jpg" alt="CIB" class="login-logo">
+    <h1>ระบบวิเคราะห์ข้อมูล</h1>
+    <p class="login-sub">เข้าสู่ระบบด้วยรหัสผ่าน</p>
+    <p class="muted">เอกสารลับ — เฉพาะผู้ได้รับอนุญาต</p>
+    <form id="loginForm" autocomplete="off">
+      <input id="pw" type="password" placeholder="รหัสผ่าน" aria-label="รหัสผ่าน" autofocus>
+      <button type="submit" id="loginBtn">เข้าสู่ระบบ</button>
+    </form>
+    <p id="loginMsg" class="err"></p>
+  </div>
+</section>
+
+<div id="app" hidden>
+  <header class="top">
+    <button id="menuBtn" class="ib only-m" aria-label="เมนู"></button>
+    <button id="backBtn" class="ib" aria-label="ย้อนกลับ" title="ย้อนกลับหน้าก่อน" hidden></button>
+    <img src="logo.jpg" alt="CIB" class="top-logo only-d">
+    <div class="top-title"><b id="pageTitle"></b><span class="only-d"><span id="caseTitle"></span> · <span id="madeAt"></span></span></div>
+    <button id="srchBtn" class="sbar" aria-label="ค้นหา"></button>
+    <button id="themeBtn" class="ib" aria-label="สลับธีม"></button>
+    <a id="logBtn" class="ib" target="_blank" rel="noopener noreferrer" aria-label="ผู้พัฒนา: บันทึกระบบเฝ้าเว็บ" title="ผู้พัฒนา: บันทึกระบบเฝ้าเว็บ (log ผู้บุกรุก)" hidden></a>
+    <button id="outBtn" class="ib" aria-label="ออกจากระบบ" title="ออกจากระบบ"></button>
+  </header>
+  <nav id="tabs" class="side" aria-label="เมนู"></nav>
+  <button id="navTgl" class="navtgl" aria-label="หุบเมนูด้านซ้าย" title="หุบเมนู (เหลือแค่ไอคอน)"></button>
+  <div id="drawerMask" class="mask" hidden></div>
+  <main id="main"></main>
+  <nav id="bnav" class="bnav" aria-label="เมนูหลัก"></nav>
+  <footer class="foot">เอกสารลับ — ใช้ในการสอบสวนเท่านั้น · ตัวเลขจาก statement ต้องตรวจทานก่อนอ้างอิง · บทบาทบุคคลเป็นข้อสันนิษฐานจากพฤติการณ์ทางการเงิน</footer>
+</div>
+<div id="search" class="search" hidden><div class="search-box"><div class="search-in"><input id="sq" type="search" placeholder="ค้นหา ชื่อ · เลขบัญชี · รหัสตู้ · รหัสสาขา" autocomplete="off"><button class="ib" data-close="1" aria-label="ปิด">✕</button></div><div id="sres"></div></div></div>
+<div id="tip" class="ntip" hidden></div>
+<div id="toast" class="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="banklogo.js?v=1"></script>
+<script src="guard.js?v=1"></script>
+<script src="app.js?v=143"></script>
+<script src="map.js?v=33"></script>
+  <script src="req.js?v=21"></script>
+  <script src="acc.js?v=8"></script>
+  <script src="flowchart.js?v=65"></script>
+  <script src="flow.js?v=60"></script>
+<script src="ai.js?v=5"></script>
+</body>
+</html>
